@@ -80,8 +80,9 @@ Get specific image
 
 {{/*
 Get specific image digest
-*/}}
+*/}}a
 {{- define "ingress-nginx.imageDigest" -}}
+{{- if .useDigest -}}
 {{- if .chroot -}}
 {{- if .digestChroot -}}
 {{- printf "@%s" .digestChroot -}}
@@ -89,6 +90,7 @@ Get specific image digest
 {{- else -}}
 {{ if .digest -}}
 {{- printf "@%s" .digest -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -241,7 +243,7 @@ Extra modules.
 {{- define "extraModules" -}}
 - name: {{ .name }}
   {{- with .image }}
-  image: {{ if .repository }}{{ .repository }}{{ else }}{{ .registry }}/{{ .image }}{{ end }}:{{ .tag }}{{ if .digest }}@{{ .digest }}{{ end }}
+  image: {{ if .repository }}{{ .repository }}{{ else }}{{ .registry }}/{{ .image }}{{ end }}:{{ .tag }}{{ if and .useDigest .digest }}@{{ .digest }}{{ end }}
   command:
   {{- if .distroless }}
     - /init_module
